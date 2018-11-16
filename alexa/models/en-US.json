@@ -1,0 +1,89 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "classroom assistant",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "PowerHandler",
+                    "slots": [
+                        {
+                            "name": "power",
+                            "type": "POWER_STATUS"
+                        }
+                    ],
+                    "samples": [
+                        "power {power} the TV",
+                        "power {power} the display",
+                        "turn {power} the TV",
+                        "turn {power} the display"
+                    ]
+                },
+                {
+                    "name": "VolumeHandler",
+                    "slots": [
+                        {
+                            "name": "volume",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "set the volume to {volume}",
+                        "set the volume at {volume}",
+                        "set volume to {volume}",
+                        "set volume at {volume}",
+                        "put the volume at {volume}",
+                        "make the volume {volume}",
+                        "adjust the volume to {volume}",
+                        "change the volume to {volume}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "POWER_STATUS",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "standby",
+                                "synonyms": [
+                                    "stand by",
+                                    "not on",
+                                    "off"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "on",
+                                "synonyms": [
+                                    "not off",
+                                    "On"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
