@@ -2,8 +2,11 @@
 """Skill for voice control support for the classrooms"""
 
 import logging
+import requests
+import json
 # Six covers things from python2.6 to python3
 import six
+import avresources
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import (
@@ -18,9 +21,6 @@ from ask_sdk_model import Response
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-power_slot_key = "POWER"
-power_slot = "power"
-
 # =====================================================================
 # Constants and Other Data, Vars, etc...
 # =====================================================================
@@ -32,9 +32,14 @@ FALLBACK_MESSAGE = "I cannot help you with that, if you need help, say help."
 FALLBACK_REPROMPT = "What can I help you with?"
 EXCEPTION_MESSAGE = "Sorry, I am unable to help with that."
 
+# Slot names and keys
+power_slot = "power"
+volume_slot = "volume"
+
 # =====================================================================
 # Helper Functions
 # =====================================================================
+
 
 def get_slot_values(filled_slots):
     """Return slot values with additional info."""
@@ -62,7 +67,8 @@ def get_slot_values(filled_slots):
             else:
                 pass
         except (AttributeError, ValueError, KeyError, IndexError, TypeError) as e:
-            logger.info("Couldn't resolve status_code for slot item: {}".format(slot_item))
+            logger.info(
+                "Couldn't resolve status_code for slot item: {}".format(slot_item))
             logger.info(e)
             slot_values[name] = {
                 "synonym": slot_item.value,
@@ -72,12 +78,87 @@ def get_slot_values(filled_slots):
     return slot_values
 
 
+def PowerRequest(powerValue):
+
+    # Data is the put body that is parameterized for power value. powerValue should be on or standby
+    data = {
+        "displays": [
+            {
+                "name": "D1",
+                "power": powerValue
+            },
+            {
+                "name": "D2",
+                "power": powerValue
+            },
+            {
+                "name": "D3",
+                "power": powerValue
+            }
+        ]
+    }
+    data = json.dumps(data)
+    url = avresources.ENDPOINT
+    token = avresources.API_KEY
+    headers = {'x-av-access-key': token, 'x-av-user': avresources.API_USER, "Content-Type": "application/json", 'data':data}
+    r = requests.put(url, headers=headers, data=data)
+    if r.status_code / 100 != 2:
+        print("OOOOF")
+    return None
+    
+def VolumeRequest(voulmeValue):
+        # Data is the put body that is parameterized for power value. powerValue should be on or standby
+    data = {
+        "displays": [
+            {
+                "name": "D1"
+            },
+            {
+                "name": "D3"
+            },
+            {
+                "name": "D2"
+            }  
+        ],
+        "audioDevices": [
+            {
+                "name": "D1",
+                "muted": False,
+                "volume": int(voulmeValue)
+            },
+            {
+                "name": "D2",
+                "muted": False,
+                "volume": int(voulmeValue)
+            },
+            {
+                "name": "D3",
+                "muted": False,
+                "volume": int(voulmeValue)
+            }
+        ]
+    }
+    data = json.dumps(data)
+    # Log out the data that is being sent to see if it is formatted correct.
+    logger.info(data)
+    url = avresources.ENDPOINT
+    token = avresources.API_KEY
+    headers = {'x-av-access-key': token, 'x-av-user': avresources.API_USER, "Content-Type": "application/json", 'data':data}
+    r = requests.put(url, headers=headers, data=data)
+    if r.status_code / 100 != 2:
+        print("OOOOF")
+    return None
+
+
+
 # =====================================================================
 # Handlers
 # =====================================================================
 
+# Standard Launch Function
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for skill launch."""
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return is_request_type("LaunchRequest")(handler_input)
@@ -85,14 +166,15 @@ class LaunchRequestHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In LaunchRequestHandler")
-        speech = ('Welcome to classroom assistant')
+        speech = ('Welcome to classroom assistant, how can I help?')
         reprompt = "What would you like me to do?"
         handler_input.response_builder.speak(speech).ask(reprompt)
         return handler_input.response_builder.response
 
-#Power Handler deals with powering on and off a display
+# Power Handler deals with powering on and off a display
 class PowerHandler(AbstractRequestHandler):
-    """Handler for Skill Launch and Roar Intent."""
+    """Handler for the power stuff of the skill."""
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return (is_request_type("LaunchRequest")(handler_input) or
@@ -101,24 +183,35 @@ class PowerHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In PowerHandler")
-        
+
         # Get the slot values for the intent
         slots = handler_input.request_envelope.request.intent.slots
-
+        
+        # The status code should I ever need it for any reason.
+        # logger.info("Status Code: {}" .format(slots["power"].resolutions.resolutions_per_authority[0].status.code))
+        
+        #SHOULD be either standby or on...And so it was, and all rejoiced.
+        # logger.info("Actual Slot Value: {}" .format(slots["power"].resolutions.resolutions_per_authority[0].values[0].value.name))
+        
+        #power_slot is "power" just as a reminder...That could have saved me 1 hour...
         if power_slot in slots:
-            powerValue = slots[power_slot].value
-            handler_input.attributes_manager.session_attributes[power_slot_key] = powerValue
-            speech = ("The power value is {}. ".format(powerValue))
+            powerRequest = slots[power_slot].value
+            # logger.info("powerRequest{}." .format(powerRequest))
+            powerValue = slots[power_slot].resolutions.resolutions_per_authority[0].values[0].value.name
+            speech = ("Turning the display to {}. ".format(powerValue))
+            PowerRequest(powerValue)
         else:
-            speech = "I'm not sure what you said. Please try again."
+            speech = "I'm not sure what you want. Please try asking again."
 
         handler_input.response_builder.speak(speech).set_card(
             SimpleCard(SKILL_NAME, "Power Handler"))
         return handler_input.response_builder.response
+      
 
-#Volume Handler deals with powering on and off a display
+# Volume Handler deals with powering on and off a display
 class VolumeHandler(AbstractRequestHandler):
-    """Handler for Skill Launch and Roar Intent."""
+    """Handler for all the volume stuff of the skill"""
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return (is_request_type("LaunchRequest")(handler_input) or
@@ -128,7 +221,16 @@ class VolumeHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         logger.info("In Volume Handler")
 
-        speech = "Changing the volume on the display"
+        slots = handler_input.request_envelope.request.intent.slots
+
+        if volume_slot in slots:
+            volumeNum = slots[volume_slot].value
+            logger.info("volumeRequest {}." .format(volumeNum))
+            speech = ("Setting the volume to {}. ".format(volumeNum))
+            VolumeRequest(volumeNum)
+        else:
+            speech = "I'm not sure what you want. Please try asking again."
+
         handler_input.response_builder.speak(speech).set_card(
             SimpleCard(SKILL_NAME, "Volume Level: "))
         return handler_input.response_builder.response
@@ -136,6 +238,7 @@ class VolumeHandler(AbstractRequestHandler):
 # Help handler (AmazonHelpIntent)
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return is_intent_name("AMAZON.HelpIntent")(handler_input)
@@ -152,6 +255,7 @@ class HelpIntentHandler(AbstractRequestHandler):
 # Cancel or Stop Handler (AmazonCancel or AmazonStop Intent)
 class CancelOrStopIntentHandler(AbstractRequestHandler):
     """Single handler for Cancel and Stop Intent."""
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return (is_intent_name("AMAZON.CancelIntent")(handler_input) or
@@ -171,6 +275,7 @@ class FallbackIntentHandler(AbstractRequestHandler):
     This handler will not be triggered except in that locale,
     so it is safe to deploy on any locale.
     """
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return is_intent_name("AMAZON.FallbackIntent")(handler_input)
@@ -179,13 +284,15 @@ class FallbackIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         logger.info("In FallbackIntentHandler")
 
-        handler_input.response_builder.speak(FALLBACK_MESSAGE).ask(FALLBACK_REPROMPT)
+        handler_input.response_builder.speak(
+            FALLBACK_MESSAGE).ask(FALLBACK_REPROMPT)
         return handler_input.response_builder.response
 
 
 # Session End Handler (AmazonStopIntent)
 class SessionEndedRequestHandler(AbstractRequestHandler):
     """Handler for Session End."""
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return is_request_type("SessionEndedRequest")(handler_input)
@@ -199,12 +306,12 @@ class SessionEndedRequestHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-
 # Exception Handler
 class CatchAllExceptionHandler(AbstractExceptionHandler):
     """Catch all exception handler, log exception and
     respond with custom message.
     """
+
     def can_handle(self, handler_input, exception):
         # type: (HandlerInput, Exception) -> bool
         return True
@@ -221,6 +328,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 # Request and Response loggers
 class RequestLogger(AbstractRequestInterceptor):
     """Log the alexa requests."""
+
     def process(self, handler_input):
         # type: (HandlerInput) -> None
         logger.debug("Alexa Request: {}".format(
@@ -229,6 +337,7 @@ class RequestLogger(AbstractRequestInterceptor):
 
 class ResponseLogger(AbstractResponseInterceptor):
     """Log the alexa responses."""
+
     def process(self, handler_input, response):
         # type: (HandlerInput, Response) -> None
         logger.debug("Alexa Response: {}".format(response))

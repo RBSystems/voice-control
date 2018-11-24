@@ -1,3 +1,4 @@
-/alexa/lambda/skill_env
 .DS_Store
+/alexa/lambda/skill_env
 alexa/lambda/setup.cfg
+/alexa/lambda/py/avresources.py
