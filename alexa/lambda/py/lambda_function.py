@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 # Constants and Other Data, Vars, etc...
 # =====================================================================
 SKILL_NAME = "Classroom Assistant"
-HELP_MESSAGE = "You can tell me to power a display on or off, you can tell me to adjust the volume, and thats it....for now...."
+HELP_MESSAGE = "You can tell me to power a display on or off, you can tell me to adjust the volume."
 HELP_REPROMPT = "What can I help you with?"
 STOP_MESSAGE = "Goodbye!"
 FALLBACK_MESSAGE = "I cannot help you with that, if you need help, say help."
@@ -39,7 +39,6 @@ volume_slot = "volume"
 # =====================================================================
 # Helper Functions
 # =====================================================================
-
 
 def get_slot_values(filled_slots):
     """Return slot values with additional info."""
@@ -106,6 +105,7 @@ def PowerRequest(powerValue):
         print("OOOOF")
     return None
     
+    # VolumeRequest is the json put body and the commands to send that command.
 def VolumeRequest(voulmeValue):
         # Data is the put body that is parameterized for power value. powerValue should be on or standby
     data = {
@@ -195,7 +195,8 @@ class PowerHandler(AbstractRequestHandler):
         
         #power_slot is "power" just as a reminder...That could have saved me 1 hour...
         if power_slot in slots:
-            powerRequest = slots[power_slot].value
+            # powerRequest and the subsequent logger.info was used for testing. Leaving in for future use
+            # powerRequest = slots[power_slot].value
             # logger.info("powerRequest{}." .format(powerRequest))
             powerValue = slots[power_slot].resolutions.resolutions_per_authority[0].values[0].value.name
             speech = ("Turning the display to {}. ".format(powerValue))
@@ -232,7 +233,61 @@ class VolumeHandler(AbstractRequestHandler):
             speech = "I'm not sure what you want. Please try asking again."
 
         handler_input.response_builder.speak(speech).set_card(
-            SimpleCard(SKILL_NAME, "Volume Level: "))
+            SimpleCard(SKILL_NAME, "Volume Level: {}" .format(volumeNum)))
+        return handler_input.response_builder.response
+
+# ChangeInputHandler takes care of switching inputs
+class ChangeInputHandler(AbstractRequestHandler):
+    """Handler for changing the inputs for a display"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return (is_request_type("LaunchRequest")(handler_input) or
+                is_intent_name("ChangeInputHandler")(handler_input))
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ChangeInput Handler")
+
+        slots = handler_input.request_envelope.request.intent.slots
+
+        if volume_slot in slots:
+            volumeNum = slots[volume_slot].value
+            logger.info("Input Request: {}." .format(volumeNum))
+            speech = ("Changing Input to  {}. ".format(volumeNum))
+            VolumeRequest(volumeNum)
+        else:
+            speech = "I'm not sure what you want. Please try asking again."
+
+        handler_input.response_builder.speak(speech).set_card(
+            SimpleCard(SKILL_NAME, "Current Input: "))
+        return handler_input.response_builder.response
+
+# BlankHandler takes care of blanking and unblanking a display
+class BlankHandler(AbstractRequestHandler):
+    """Handler for blanking and unblanking the screen"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return (is_request_type("LaunchRequest")(handler_input) or
+                is_intent_name("BlankHandler")(handler_input))
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In Blank Handler")
+
+        slots = handler_input.request_envelope.request.intent.slots
+
+        if volume_slot in slots:
+            volumeNum = slots[volume_slot].value
+            logger.info("Blank Request: {}." .format(volumeNum))
+            speech = ("Setting the display to {}. ".format(volumeNum))
+            VolumeRequest(volumeNum)
+        else:
+            speech = "I'm not sure what you want. Please try asking again."
+
+        handler_input.response_builder.speak(speech).set_card(
+            SimpleCard(SKILL_NAME, "Blank Status: "))
         return handler_input.response_builder.response
 
 # Help handler (AmazonHelpIntent)
