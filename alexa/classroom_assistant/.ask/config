@@ -1,0 +1,33 @@
+{
+  "deploy_settings": {
+    "default": {
+      "skill_id": "amzn1.ask.skill.b236a797-ff78-4d49-acfc-5727e27a1d68",
+      "was_cloned": true,
+      "merge": {},
+      "resources": {
+        "manifest": {
+          "eTag": "eb5380d3a831ccf3a244fc936e41eabd"
+        },
+        "interactionModel": {
+          "en-US": {
+            "eTag": "623678cbe5459ca92922fd93fb54dee9"
+          }
+        },
+        "lambda": [
+          {
+            "arn": "arn:aws:lambda:us-east-1:304435942620:function:classroomAssistant",
+            "awsRegion": "us-east-1",
+            "functionName": "classroomAssistant",
+            "alexaUsage": [
+              "custom/default"
+            ],
+            "revisionId": "d79d16be-48e6-42c7-a469-3e4ee3ae07fe",
+            "codeUri": "lambda/us-east-1_classroomAssistant",
+            "handler": "lambda_function.lambda_handler",
+            "runtime": "python3.6"
+          }
+        ]
+      }
+    }
+  }
+}

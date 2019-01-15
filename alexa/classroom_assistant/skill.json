@@ -1,0 +1,34 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "summary": "Find the pet that is just right for you.",
+          "examplePhrases": [
+            "Alexa open classroom assistant",
+            "Alexa ask classroom assistant to change the volume to 40",
+            "Alexa tell classroom assistant to turn on the tv"
+          ],
+          "name": "classroom assistant"
+        }
+      },
+      "isAvailableWorldwide": false,
+      "testingInstructions": "account: myTestAccount",
+      "category": "EDUCATION_AND_REFERENCE",
+      "distributionMode": "PRIVATE",
+      "distributionCountries": [
+          "US"
+      ]
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "classroomAssistant",
+          "sourceDir": "lambda/us-east-1_classroomAssistant"
+        },
+        "interfaces": []
+      }
+    },
+    "manifestVersion": "1.0"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "classroom assistant",
+      "intents": [
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "PowerHandler",
+          "slots": [
+            {
+              "name": "power",
+              "type": "POWER_STATUS"
+            }
+          ],
+          "samples": [
+            "turn the device {power}",
+            "power {power} the TV",
+            "power {power} the display",
+            "turn {power} the TV",
+            "turn {power} the display"
+          ]
+        },
+        {
+          "name": "VolumeHandler",
+          "slots": [
+            {
+              "name": "volume",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "set the volume to {volume}",
+            "set the volume at {volume}",
+            "set volume to {volume}",
+            "set volume at {volume}",
+            "put the volume at {volume}",
+            "make the volume {volume}",
+            "adjust the volume to {volume}",
+            "change the volume to {volume}"
+          ]
+        },
+        {
+          "name": "ChangeInputHandler",
+          "slots": [],
+          "samples": []
+        },
+        {
+          "name": "BlankHandler",
+          "slots": [],
+          "samples": []
+        }
+      ],
+      "types": [
+        {
+          "values": [
+            {
+              "name": {
+                "value": "standby",
+                "synonyms": [
+                  "stand by",
+                  "off"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "on"
+              }
+            }
+          ],
+          "name": "POWER_STATUS"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "via",
+                "synonyms": [
+                  "VIA"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "apple tv"
+              }
+            },
+            {
+              "name": {
+                "value": "hdmi4",
+                "synonyms": [
+                  "HDMI 4"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "hdmi3",
+                "synonyms": [
+                  "HDMI 3"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "hdmi2",
+                "synonyms": [
+                  "HDMI 2"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "hdmi1",
+                "synonyms": [
+                  "HDMI 1"
+                ]
+              }
+            }
+          ],
+          "name": "INPUT_LIST"
+        },
+        {
+          "values": [
+            {
+              "name": {
+                "value": "unblank",
+                "synonyms": [
+                  "un-blanked",
+                  "unblanked"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "blank",
+                "synonyms": [
+                  "blanked"
+                ]
+              }
+            }
+          ],
+          "name": "BLANKED_STATUS"
+        }
+      ]
+    }
+  }
+}
