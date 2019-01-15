@@ -3,13 +3,14 @@
     "publishingInformation": {
       "locales": {
         "en-US": {
-          "summary": "Find the pet that is just right for you.",
+          "summary": "Helps control classrooms and conference rooms on BYU campus.",
           "examplePhrases": [
             "Alexa open classroom assistant",
             "Alexa ask classroom assistant to change the volume to 40",
             "Alexa tell classroom assistant to turn on the tv"
           ],
-          "name": "classroom assistant"
+          "name": "classroom assistant",
+          "description": "This skill helps control classroom and conference room AV equipment."
         }
       },
       "isAvailableWorldwide": false,
@@ -29,6 +30,18 @@
         "interfaces": []
       }
     },
-    "manifestVersion": "1.0"
+    "manifestVersion": "1.0",
+    "privacyAndCompliance": {
+        "allowsPurchases": false,
+        "locales": {
+            "en-US": {
+                "privacyPolicyUrl": "linkGoesHere"
+            }
+        },
+        "isExportCompliant": true,
+        "containsAds": false,
+        "isChildDirected": false,
+        "usesPersonalInfo": false
+    }
   }
 }
