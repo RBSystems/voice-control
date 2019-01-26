@@ -8,6 +8,10 @@ import json
 import six
 import avresources
 
+# This stuff is for Alexa for Business
+import boto3
+client = boto3.client('alexaforbusiness')
+
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import (
     AbstractRequestHandler, AbstractExceptionHandler,
@@ -255,9 +259,11 @@ class BlankHandler(AbstractRequestHandler):
 # InfoHandler will hopefully help get information about the room so I can get room ID stuff for A4B
 class InfoHandler(AbstractRequestHandler):
     """Handler for getting information"""
+
     def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
         return (is_request_type("LaunchRequest")(handler_input) or
-        is_intent_name("InfoHandler")(handler_input))
+                is_intent_name("InfoHandler")(handler_input))
 
     def handle(self, handler_input):
         logger.info("In InfoHandler")
@@ -266,6 +272,10 @@ class InfoHandler(AbstractRequestHandler):
 
         logger.info("Skill Info returned: {}" .format(info))
         speech = "I gave you your info, what else do you want from me?!"
+
+        #this should go to request the room information from A4B
+        room = client.get_room()
+        logger.info("Room Info {}" .format(room))
         
         handler_input.response_builder.speak(speech)
         return handler_input.response_builder.response
@@ -386,6 +396,7 @@ sb = SkillBuilder()
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(PowerHandler())
 sb.add_request_handler(VolumeHandler())
+sb.add_request_handler(InfoHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
