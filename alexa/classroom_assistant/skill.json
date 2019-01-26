@@ -9,16 +9,19 @@
             "Alexa ask classroom assistant to change the volume to 40",
             "Alexa tell classroom assistant to turn on the tv"
           ],
+          "keywords": [],
           "name": "classroom assistant",
-          "description": "This skill helps control classroom and conference room AV equipment."
+          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/100d/634d9357fd3e4750a48480bb5600dab4/APP_ICON?versionId=MQcysm4LOBlZIjKhpUkVRToC7Z9zBDMG&AWSAccessKeyId=AKIAJFEYRBGIHK2BBYKA&Expires=1547855050&Signature=bQhj1xzAUNM%2F9%2B0tH9qrpmrxpIs%3D",
+          "description": "This skill helps control classroom and conference room AV equipment.",
+          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/e47d/96616e5cee4840468860f180e9cd5208/APP_ICON_LARGE?versionId=8ne_ysKIFgkfF.4.T_1KQvExqJTTczFT&AWSAccessKeyId=AKIAJFEYRBGIHK2BBYKA&Expires=1547855050&Signature=gdQcLPC7JEaMOPCEJGaXNrpX5m8%3D"
         }
       },
       "isAvailableWorldwide": false,
-      "testingInstructions": "account: myTestAccount",
+      "testingInstructions": "Ask Alexa to turn on the tv. Once it is on you can have her change the volume and other things.",
       "category": "EDUCATION_AND_REFERENCE",
       "distributionMode": "PRIVATE",
       "distributionCountries": [
-          "US"
+        "US"
       ]
     },
     "apis": {
@@ -32,16 +35,16 @@
     },
     "manifestVersion": "1.0",
     "privacyAndCompliance": {
-        "allowsPurchases": false,
-        "locales": {
-            "en-US": {
-                "privacyPolicyUrl": "linkGoesHere"
-            }
-        },
-        "isExportCompliant": true,
-        "containsAds": false,
-        "isChildDirected": false,
-        "usesPersonalInfo": false
+      "allowsPurchases": false,
+      "locales": {
+        "en-US": {
+          "privacyPolicyUrl": "https://privacy.byu.edu"
+        }
+      },
+      "isExportCompliant": true,
+      "containsAds": false,
+      "isChildDirected": false,
+      "usesPersonalInfo": false
     }
   }
 }

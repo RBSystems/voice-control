@@ -39,44 +39,6 @@ volume_slot = "volume"
 # =====================================================================
 # Helper Functions
 # =====================================================================
-
-def get_slot_values(filled_slots):
-    """Return slot values with additional info."""
-    # type: (Dict[str, Slot]) -> Dict[str, Any]
-    slot_values = {}
-    logger.info("Filled slots: {}".format(filled_slots))
-
-    for key, slot_item in six.iteritems(filled_slots):
-        name = slot_item.name
-        try:
-            status_code = slot_item.resolutions.resolutions_per_authority[0].status.code
-
-            if status_code == StatusCode.ER_SUCCESS_MATCH:
-                slot_values[name] = {
-                    "synonym": slot_item.value,
-                    "resolved": slot_item.resolutions.resolutions_per_authority[0].values[0].value.name,
-                    "is_validated": True,
-                }
-            elif status_code == StatusCode.ER_SUCCESS_NO_MATCH:
-                slot_values[name] = {
-                    "synonym": slot_item.value,
-                    "resolved": slot_item.value,
-                    "is_validated": False,
-                }
-            else:
-                pass
-        except (AttributeError, ValueError, KeyError, IndexError, TypeError) as e:
-            logger.info(
-                "Couldn't resolve status_code for slot item: {}".format(slot_item))
-            logger.info(e)
-            slot_values[name] = {
-                "synonym": slot_item.value,
-                "resolved": slot_item.value,
-                "is_validated": False,
-            }
-    return slot_values
-
-
 def PowerRequest(powerValue):
 
     # Data is the put body that is parameterized for power value. powerValue should be on or standby
@@ -289,6 +251,25 @@ class BlankHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(speech).set_card(
             SimpleCard(SKILL_NAME, "Blank Status: "))
         return handler_input.response_builder.response
+
+# InfoHandler will hopefully help get information about the room so I can get room ID stuff for A4B
+class InfoHandler(AbstractRequestHandler):
+    """Handler for getting information"""
+    def can_handle(self, handler_input):
+        return (is_request_type("LaunchRequest")(handler_input) or
+        is_intent_name("InfoHandler")(handler_input))
+
+    def handle(self, handler_input):
+        logger.info("In InfoHandler")
+
+        info = handler_input.request_envelope
+
+        logger.info("Skill Info returned: {}" .format(info))
+        speech = "I gave you your info, what else do you want from me?!"
+        
+        handler_input.response_builder.speak(speech)
+        return handler_input.response_builder.response
+
 
 # Help handler (AmazonHelpIntent)
 class HelpIntentHandler(AbstractRequestHandler):
